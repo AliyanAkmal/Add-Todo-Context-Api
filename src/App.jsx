@@ -6,17 +6,21 @@ import TodoForm from "./components/TodoForm/TodoForm";
 
 function App() {
   const [todos, setTodo] = useState([]);
+
   const addTodo = (id, todo) => {
-    setTodo((prev) => [{ id: Date.now(), ...todo }, ...prev]);
+    setTodo((prev) => [...prev, { id, ...todo }]);
   };
-  const updateTodo = (id, todos) => {
+
+  const updateTodo = (id, updatedTodo) => {
     setTodo((prev) =>
-      prev.map((prevTodos) => (prevTodos.id === id ? todos : prevTodos))
+      prev.map((todo) => (todo.id === id ? updatedTodo : todo))
     );
   };
+
   const deleteTodo = (id) => {
     setTodo((prev) => prev.filter((todo) => todo.id !== id));
   };
+
   const toggleComplete = (id) => {
     setTodo((prev) =>
       prev.map((todo) =>
@@ -24,18 +28,18 @@ function App() {
       )
     );
   };
-  ///////local storage////////
+
   useEffect(() => {
-    const todos = JSON.parse(localStorage.getItem("todos"));
-    if (todos && todos.length > 0) {
-      setTodo(todos);
+    const savedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (savedTodos && savedTodos.length > 0) {
+      setTodo(savedTodos);
     }
   }, []);
 
-  ////////////
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
+
   return (
     <TodoProvider
       value={{ todos, addTodo, updateTodo, deleteTodo, toggleComplete }}
@@ -49,14 +53,15 @@ function App() {
             <TodoForm />
           </div>
           <div className="flex flex-wrap gap-y-3">
-            {/*Loop and Add TodoItem here */}
-            {todos.map((todo) => {
-              return (
+            {todos.length > 0 ? (
+              todos.map((todo) => (
                 <div key={todo.id} className="w-full">
                   <TodoItem todo={todo} />
                 </div>
-              );
-            })}
+              ))
+            ) : (
+              <p className="text-center w-full">No todos yet. Add one!</p>
+            )}
           </div>
         </div>
       </div>

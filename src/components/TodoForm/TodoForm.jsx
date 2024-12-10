@@ -2,31 +2,33 @@ import { useState } from "react";
 import { useTodoContext } from "../../contexts";
 
 function TodoForm() {
-  const [todo, setTodo] = useState();
+  const [todoMsg, setTodoMsg] = useState("");
   const { addTodo } = useTodoContext();
-  const add = (e) => {
-    e.preventDefault();
-    if (todo) {
-      addTodo({ todo, completed: false });
-      setTodo("");
+
+  const handleAddTodo = () => {
+    if (todoMsg.trim() !== "") {
+      addTodo(Date.now(), { todo: todoMsg, completed: false });
+      setTodoMsg("");
     }
   };
+
   return (
-    <form onSubmit={add} className="flex">
+    <div className="flex gap-x-3">
       <input
         type="text"
-        placeholder="Write Todo..."
-        value={todo}
-        onChange={(e) => setTodo(e.target.value)}
-        className="w-full border border-black/10 rounded-l-lg px-3 outline-none duration-150 bg-white/20 py-1.5"
+        className="flex-1 border rounded-lg px-3 py-2 outline-none"
+        placeholder="Add a new todo"
+        value={todoMsg}
+        onChange={(e) => setTodoMsg(e.target.value)}
+        style={{ color: "black", fontWeight: "bold" }}
       />
       <button
-        type="submit"
-        className="rounded-r-lg px-3 py-1 bg-green-600 text-white shrink-0"
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        onClick={handleAddTodo}
       >
         Add
       </button>
-    </form>
+    </div>
   );
 }
 
